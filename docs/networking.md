@@ -1,19 +1,43 @@
 # Networking
 
-## Current local addresses
+## Current Design
 
-These are the addresses observed during setup and may change if DHCP leases change.
+The Proxmox host uses the Linux bridge `vmbr0` to connect the host and guest networking. The home router may provide LAN gateway and DHCP services; verify the actual configuration.
 
-| System | Address | Service |
+| Component | Network role |
+|---|---|
+| Home router | LAN gateway / DHCP (verify) |
+| Proxmox bridge `vmbr0` | Connects host and guest networking |
+| CT 101 — Jellyfin | Media streaming |
+| CT 102 — Samba | Authenticated file sharing |
+
+## Address Inventory
+
+Fill these in after verifying them in the Proxmox UI or with `ip -br address` on the host and inside each container.
+
+| Device | Address | Assignment |
 |---|---|---|
-| Proxmox host | `192.168.86.2` | Web interface on port `8006` |
-| Jellyfin CT 101 | `192.168.86.50` | Web interface on port `8096` |
-| Samba CT 102 | `192.168.86.48` | SMB file sharing |
+| Proxmox host | To verify | To verify |
+| Jellyfin CT 101 | To verify | To verify |
+| Samba CT 102 | To verify | To verify |
 
-## Access
+Do not publish your public IP address, router credentials, VPN configuration, or remote-access endpoints.
 
-- Proxmox: `https://192.168.86.2:8006`
-- Jellyfin: `http://192.168.86.50:8096`
-- Samba share from Windows: `\\192.168.86.48\Media`
+## Ports to Review
 
-Use these addresses only on the trusted local network. Do not expose Proxmox administration or SMB directly to the public internet. Consider DHCP reservations if stable addresses are needed.
+These are common defaults, not confirmation that a port is open in this environment.
+
+| Service | Typical port | Intended access |
+|---|---:|---|
+| Proxmox web UI | TCP 8006 | Trusted administration devices only |
+| SSH | TCP 22 | Administration only |
+| Jellyfin HTTP | TCP 8096 | Local media clients |
+| Samba | TCP 445 | Trusted local clients |
+
+## Future Improvements
+
+- [ ] Record verified IP assignments and DHCP/static configuration.
+- [ ] Document firewall rules.
+- [ ] Consider a separate VLAN for servers and lab systems.
+- [ ] Restrict administrative interfaces to trusted devices.
+- [ ] Document DNS and any future HTTPS configuration.

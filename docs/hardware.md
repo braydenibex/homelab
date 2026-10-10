@@ -1,13 +1,40 @@
-# Hardware
+# Hardware Inventory
 
-## Known hardware
+Record exact specifications from the running system or device labels. Do not guess at missing values.
 
-- Proxmox host with an internal SSD used for the Proxmox system and local LVM storage.
-- External Seagate One Touch USB hard drive, approximately 4.5 TB, formatted as exFAT.
-- Local network connection through Proxmox bridge `vmbr0`.
+## Proxmox Host
 
-Exact host model, CPU, memory, and network hardware should be added after confirming them on the system.
+| Component | Details |
+|---|---|
+| Device / model | To be verified |
+| CPU | To be verified |
+| Memory | To be verified |
+| Boot drive | To be verified |
+| Network interface | To be verified |
+| Proxmox version | Setup notes say 9.2.20; verify on host |
 
-## Storage safety
+## Storage
 
-The external drive contains existing files. Never initialize, format, or repartition it as part of routine troubleshooting. Confirm device identity and mount points before running storage commands.
+| Device | Capacity | Filesystem / role |
+|---|---:|---|
+| External Seagate One Touch HDD | Reported approximately 4.5 TB | exFAT media storage |
+
+## Commands to Run When Home
+
+Run these read-only inventory commands on the Proxmox host:
+
+```bash
+hostnamectl
+lscpu
+free -h
+lsblk -o NAME,SIZE,MODEL,FSTYPE,MOUNTPOINTS
+ip -br link
+pveversion -v
+```
+
+Review output before committing. Remove serial numbers, unique identifiers, public addresses, and other information you do not want public.
+
+## Notes
+
+- Do not disconnect or reformat the media drive while containers are using it.
+- Confirm the exact model and capacity directly on the host.

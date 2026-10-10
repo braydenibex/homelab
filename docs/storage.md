@@ -1,30 +1,46 @@
 # Storage
 
-## Current arrangement
+## Current Media Disk
 
-- Proxmox host mount: `/mnt/external-hdd`
-- Device partition observed during setup: `/dev/sdb2`
-- Filesystem: exFAT
-- Volume label: `One Touch`
-- Media directory: `/mnt/external-hdd/media`
-- Media subdirectories: `movies` and `tv`
+| Property | Details |
+|---|---|
+| Device | External Seagate One Touch HDD |
+| Reported capacity | Approximately 4.5 TB |
+| Filesystem | exFAT |
+| Host mount location | Verify on the Proxmox host |
+| Primary use | Media library for Jellyfin and file access through Samba |
 
-The partition UUID recorded during setup is `2A09-412F`. Confirm it on the host before relying on it in any command.
+**Important:** this drive contains existing data. Never format, repartition, or run destructive filesystem repair commands as part of routine setup.
 
-## Mount configuration
+## Intended Mount Design
 
-The intended persistent mount entry in `/etc/fstab` is:
+The disk is mounted on the Proxmox host. Host directories are then bind-mounted into the relevant LXC containers.
 
-```fstab
-UUID=2A09-412F /mnt/external-hdd exfat defaults,nofail,x-systemd.device-timeout=10,uid=101000,gid=101000,fmask=0117,dmask=0007 0 0
+Jellyfin paths recorded during setup:
+
+- Movies: `/media/movies`
+- TV: `/media/tv`
+
+Verify the host mount point and each container's mount configuration before changing anything.
+
+## Read-Only Verification Commands
+
+Run on the Proxmox host:
+
+```bash
+lsblk -f
+findmnt
+df -hT
+pct config 101
+pct config 102
 ```
 
-This entry reflects the current setup notes; verify ownership and permission behavior before changing it. A successful `findmnt --verify --verbose` check was observed during setup.
+Review output for UUIDs and other identifiers before sharing it publicly.
 
-## Safety checklist
+## Permissions and Reliability
 
-1. Identify the drive using `lsblk -f` and `blkid`.
-2. Check mount status with `findmnt /mnt/external-hdd`.
-3. Never assume `/dev/sdb` will always identify the same device.
-4. Do not format or repartition the external drive.
-5. Keep a separate backup of irreplaceable files; a single external drive is not a backup.
+- Jellyfin should only need read access to the media library.
+- Test Samba permissions with a disposable test file.
+- Confirm the drive mounts automatically after reboot.
+- Ensure dependent containers do not start against an empty mount-point directory if the external disk is missing.
+- Maintain a separate backup of important data. A media disk is not itself a backup.

@@ -1,26 +1,35 @@
-# Troubleshooting Notes
+# Troubleshooting Log
 
-## External drive is missing
+Record problems and the steps used to resolve them. Include only verified details and redact secrets from command output.
 
-1. Check devices with `lsblk -f`.
-2. Check the expected mount with `findmnt /mnt/external-hdd`.
-3. Confirm the UUID and filesystem before editing `/etc/fstab`.
-4. Do not format the disk or guess which `/dev/sdX` device it is.
+## Entry Template
 
-## Samba share will not open
+### YYYY-MM-DD — Short problem title
 
-1. Confirm CT 102 is running and has the expected IP.
-2. Check `systemctl status smbd`.
-3. Run `testparm -s` after configuration edits.
-4. Confirm the share path exists and the account has access.
-5. Verify Windows is connecting to the intended address and using the Samba account.
+**Symptoms**
+- What failed and what error appeared?
 
-## Jellyfin cannot see media
+**Environment**
+- Host or container:
+- Recent changes:
 
-1. Confirm CT 101 is running.
-2. Confirm the host drive is mounted.
-3. Verify the container's `/media` mount is present and read-only.
-4. Check that media files exist under `/media/movies` or `/media/tv`.
-5. Review Jellyfin logs and library settings.
+**Investigation**
+1. Record non-destructive commands and observations.
+2. Compare expected and actual behavior.
+3. Identify the likely cause.
 
-When documenting a fix, include the observed symptom, diagnostic commands, root cause, solution, and verification result. Redact secrets from command output.
+**Resolution**
+- Document the change made.
+
+**Verification**
+- Explain how the fix was confirmed.
+
+**Prevention / Lessons**
+- Note any monitoring, backup, or documentation improvement.
+
+## Safety Reminders
+
+- Start with read-only inspection commands.
+- Back up configuration before editing it.
+- Avoid formatting, repartitioning, or destructive filesystem repair on the existing media disk.
+- Never paste passwords, tokens, or unredacted logs into public issues or commits.

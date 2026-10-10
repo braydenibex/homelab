@@ -1,0 +1,15 @@
+# Local environment files and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_rsa
+id_ed25519
+secrets/
+private/
+# Temporary and editor files
+*.swp
+*~
+.DS_Store
+Thumbs.db

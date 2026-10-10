@@ -1,24 +1,38 @@
 # Proxmox VE
 
-## Host
+## Role
 
-- Node name: `proxmox`
-- Version recorded during setup: Proxmox VE 9.2.20
-- Web interface: `https://192.168.86.2:8006`
-- Linux bridge: `vmbr0`
+Proxmox VE provides virtualization and container management for this homelab.
 
-## Containers
+| Property | Value |
+|---|---|
+| Node name | `proxmox` (verify) |
+| Version | Setup notes say 9.2.20 (verify) |
+| Network bridge | `vmbr0` |
+| Guests | CT 101 Jellyfin; CT 102 Samba |
 
-| CT ID | Hostname | OS | Purpose |
-|---|---|---|---|
-| 101 | `jellyfin` | Debian 12 | Media streaming |
-| 102 | `samba` | Debian 12 | SMB file sharing |
+## Useful Read-Only Commands
 
-Both containers are unprivileged. The media directory is passed into them as `/media`; Jellyfin uses a read-only mount and Samba uses a read-write mount.
+```bash
+pveversion -v
+pvesm status
+ip -br address
+lsblk -f
+pct list
+pct config 101
+pct config 102
+```
 
-## Safe maintenance
+## Container Inventory
 
-- Back up container configuration before editing it.
-- Use the Proxmox UI or CLI to shut down containers cleanly.
-- Check storage and mount status before restarting services.
-- Never paste passwords, tokens, or private keys into documentation.
+| CT ID | Operating system | Purpose |
+|---:|---|---|
+| 101 | Debian 12 | Jellyfin media streaming |
+| 102 | Debian 12 | Samba file sharing |
+
+## Operational Notes
+
+- Back up container configuration and important data before significant changes.
+- Track host updates separately from guest operating system updates.
+- Avoid publishing unredacted configuration output, tokens, passwords, or private network details.
+- Test recovery procedures rather than assuming a backup is usable.

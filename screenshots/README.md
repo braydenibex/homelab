@@ -2,10 +2,12 @@
 
 Add sanitized screenshots here as the project develops.
 
-Before committing a screenshot, check for:
-- Passwords, tokens, QR codes, and recovery codes
-- Public IP addresses or personal account details
-- Disk serial numbers or other identifiers you do not want public
-- Browser tabs, notifications, or unrelated personal information
+Suggested screenshots:
+- Proxmox node summary.
+- LXC inventory showing CT 101 and CT 102.
+- Storage view and verified mount configuration.
+- Jellyfin library or playback test.
+- Samba share accessed from a client.
+- Network topology diagram.
 
-Prefer screenshots that explain a setup step, demonstrate a working service, or help diagnose a documented issue. Do not upload screenshots containing credentials.
+Before committing screenshots, redact public IPs, usernames, serial numbers, tokens, credentials, and details you do not want to disclose publicly. Avoid screenshots containing browser notifications or unrelated personal information.

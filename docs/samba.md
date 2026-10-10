@@ -1,27 +1,43 @@
 # Samba File Sharing
 
-## Goal
+## Purpose
 
-Provide authenticated access to the media folders from Windows on the local network.
+Samba provides authenticated file sharing to trusted devices on the local network.
 
-## Current configuration
+## Deployment
 
-- Container: CT 102, hostname `samba`, Debian 12
-- Share name: `Media`
-- Share path inside the container: `/media`
-- Account: `mediauser`
-- Guest access: disabled
-- Read-only: disabled for this share
-- Forced file user: `mediauser`
+| Property | Details |
+|---|---|
+| Platform | Proxmox VE |
+| Guest | LXC CT 102 |
+| OS | Debian 12 |
+| Intended access | Local network only |
+| Share name | `Media` (verify current configuration) |
 
-The Windows PC successfully opened `\\192.168.86.48\Media` and displayed the `movies` and `tv` folders. A complete write test still needs confirmation.
+## Validation Checklist
 
-## Verification checklist
+- [ ] Confirm the Samba service is running.
+- [ ] Connect from a trusted client using an authorized account.
+- [ ] Test reading an existing file.
+- [ ] Create a harmless test file in a designated test directory.
+- [ ] Verify write and delete permissions only where intended.
+- [ ] Confirm a share intended to be read-only is not writable.
 
-1. Run `testparm -s` in the Samba container after configuration changes.
-2. Check service status with `systemctl status smbd`.
-3. Connect from Windows using the Samba username and password.
-4. Copy a small test file into the share and confirm it appears in the expected host directory.
-5. Remove the test file after verifying access.
+## Security Notes
 
-Do not commit Samba passwords or other credentials to this repository.
+- Avoid guest access unless there is a documented reason.
+- Use strong, unique credentials.
+- Do not expose SMB directly to the public internet.
+- Never commit Samba passwords or unredacted configuration files.
+
+## Troubleshooting
+
+Useful commands inside the Samba container:
+
+```bash
+systemctl status smbd
+testparm -s
+journalctl -u smbd --since "30 minutes ago"
+```
+
+Review command output for usernames, share paths, and other details before publishing.

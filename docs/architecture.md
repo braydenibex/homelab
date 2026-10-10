@@ -1,24 +1,49 @@
-# Architecture
+# Homelab Architecture
 
 ## Overview
 
-The Proxmox host runs separate unprivileged LXC containers for Jellyfin and Samba. An external exFAT drive is mounted on the host, and its media directory is passed into each container.
+Proxmox VE is the virtualization layer. Services run in separate Debian LXC containers so they can be administered and troubleshot independently.
 
-- **CT 101 — Jellyfin:** media access is configured read-only.
-- **CT 102 — Samba:** provides authenticated local-network file sharing.
-- **Host storage mount:** `/mnt/external-hdd`.
-- **Media path on host:** `/mnt/external-hdd/media`.
-- **Media path inside containers:** `/media`.
+## Logical Architecture
 
-## Data flow
+```text
+Home LAN
+   |
+Router / DHCP
+   |
+Proxmox host (vmbr0)
+   |----------------------|
+   |                      |
+CT 101: Jellyfin       CT 102: Samba
+   |                      |
+Read-only media mount   Authenticated file share
+   \                      /
+    External media disk mounted on Proxmox host
+```
 
-1. The external drive is mounted by Proxmox.
-2. Proxmox bind-mounts the media directory into each container.
-3. A Windows PC accesses the Samba share to manage files.
-4. Jellyfin reads the media files from its read-only mount.
+See [the editable topology diagram](../diagrams/network-topology.mmd).
 
-## Design notes
+## Design Decisions
 
-Keeping file sharing and media streaming in separate containers helps separate service configuration and permissions. A read-only Jellyfin mount reduces the chance of accidental changes to the media library from that service.
+- **Separate services:** Jellyfin and Samba run in separate unprivileged LXC containers to reduce coupling.
+- **Host-managed storage:** The external disk is mounted on the Proxmox host and exposed to containers through bind mounts.
+- **Read-only media for Jellyfin:** Intended to reduce accidental changes to the media library.
+- **Preserve existing data:** The external drive contains existing files. Do not format or repartition it as part of routine maintenance.
 
-Verify current container configuration before applying any changes. Do not format the existing external drive.
+## Current Inventory
+
+| Component | Role | Status |
+|---|---|---|
+| Proxmox VE node `proxmox` | Hypervisor | Installed; verify version |
+| CT 101 — Debian 12 | Jellyfin media server | Installed; playback test pending |
+| CT 102 — Debian 12 | Samba file sharing | Installed; file-operation test pending |
+| External Seagate One Touch HDD | Media storage | Reported mounted on host; preserve existing data |
+
+## Validation Checklist
+
+- [ ] Confirm both containers start as intended after host reboot.
+- [ ] Confirm each service remains reachable after restart.
+- [ ] Confirm Jellyfin can read media but cannot modify the media mount.
+- [ ] Confirm Samba authentication and permissions work as intended.
+- [ ] Confirm the media disk is mounted before dependent containers start.
+- [ ] Document and test backups.

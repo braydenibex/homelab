@@ -1,21 +1,42 @@
 # Jellyfin
 
-## Current setup
+## Purpose
 
-- Container: CT 101, hostname `jellyfin`
-- OS: Debian 12, unprivileged LXC
-- Web interface: `http://192.168.86.50:8096`
-- Media path inside container: `/media`
-- Media mount: configured read-only
+Jellyfin provides self-hosted media streaming for the local network.
 
-The service was installed from the official Jellyfin repository after resolving a repository configuration conflict.
+## Deployment
 
-## Next steps
+| Property | Details |
+|---|---|
+| Platform | Proxmox VE |
+| Guest | LXC CT 101 |
+| OS | Debian 12 |
+| Movies path | `/media/movies` |
+| TV path | `/media/tv` |
+| Default web port | TCP 8096; verify actual configuration |
 
-- Complete the first-run wizard if not already done.
-- Add the Movies library pointing to `/media/movies`.
-- Add the TV library pointing to `/media/tv`.
-- Copy a test media file through Samba and confirm it appears in Jellyfin.
-- Test playback and verify logs if playback fails.
+## Storage Access
 
-Keep the Jellyfin media mount read-only unless there is a specific, understood reason to change it.
+Media is supplied from the external disk mounted on the Proxmox host. The intended design is read-only access from Jellyfin to reduce accidental changes to the library.
+
+## Validation Checklist
+
+- [ ] Open the Jellyfin web interface from a trusted LAN device.
+- [ ] Add Movies and TV libraries using the paths above.
+- [ ] Confirm media is indexed correctly.
+- [ ] Play a test file and verify playback.
+- [ ] Confirm the container cannot write to the media mount.
+- [ ] Test service availability after a container restart.
+- [ ] Verify whether hardware transcoding is configured; do not assume it is enabled.
+
+## Troubleshooting
+
+Useful commands inside the container:
+
+```bash
+systemctl status jellyfin
+journalctl -u jellyfin --since "30 minutes ago"
+df -h
+```
+
+Redact account names, private paths, and other sensitive details from logs before publishing.
