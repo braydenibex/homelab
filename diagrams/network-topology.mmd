@@ -1,0 +1,14 @@
+flowchart TD
+    LAN[Home LAN]
+    HOST[Proxmox VE host<br/>192.168.86.2]
+    DRIVE[External exFAT drive<br/>/mnt/external-hdd/media]
+    JF[Jellyfin CT 101<br/>192.168.86.50<br/>Read-only media mount]
+    SMB[Samba CT 102<br/>192.168.86.48<br/>Authenticated SMB share]
+    PC[Windows PC]
+
+    LAN --- HOST
+    HOST --- DRIVE
+    HOST --- JF
+    HOST --- SMB
+    PC -->|Web UI :8096| JF
+    PC -->|SMB share| SMB
